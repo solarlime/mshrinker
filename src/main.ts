@@ -4,6 +4,8 @@ import { readdir } from 'node:fs';
 import isToolAvailable from './isToolAvailable';
 import copyMetadata from './copyMetadata';
 import encodeFile from './encodeFile';
+import parseFileName from './parseFileName/parseFileName';
+import allowedExtensions from './parseFileName/allowedExtensions';
 
 Promise.all([
   isToolAvailable('exiftool', '-ver'),
@@ -26,23 +28,37 @@ Promise.all([
         } else {
           console.log(`ℹ️ Найдено файлов: ${files.length}`);
           for (const file of files) {
+            const { name, extension } = parseFileName(file);
+            if (file.startsWith('.')) {
+              console.warn(`⚠️ Пропускаю скрытый файл ${file}`);
+              continue;
+            }
+            if (!extension || !allowedExtensions.includes(extension)) {
+              console.warn(
+                `⚠️ Пропускаю файл ${file} с недопустимым расширением`,
+              );
+              continue;
+            }
             console.log(`ℹ️ Создаю сжатую копию ${input}/${file} в ${output}`);
+            const outputFileName = `${name}.${extension.toLowerCase() === 'm4v' ? 'mov' : extension}`;
             await encodeFile(
               `${process.cwd()}/${input}/${file}`,
-              `${process.cwd()}/${output}/${file}`,
+              `${process.cwd()}/${output}/${outputFileName}`,
             )
-              .then(() => console.log(`✅  Создан файл ${output}/${file}`))
+              .then(() =>
+                console.log(`✅  Создан файл ${output}/${outputFileName}`),
+              )
               .catch(console.error);
             console.log(
-              `\nℹ️ Копирую метаданные файла ${input}/${file} в ${output}/${file}`,
+              `\nℹ️ Копирую метаданные файла ${input}/${file} в ${output}/${outputFileName}`,
             );
             await copyMetadata(
               `${process.cwd()}/${input}/${file}`,
-              `${process.cwd()}/${output}/${file}`,
+              `${process.cwd()}/${output}/${outputFileName}`,
             )
               .then(() =>
                 console.log(
-                  `✅  Метаданные файла ${input}/${file} скопированы в ${output}/${file}`,
+                  `✅  Метаданные файла ${input}/${file} скопированы в ${output}/${outputFileName}`,
                 ),
               )
               .catch(console.error);
