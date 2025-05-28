@@ -20,31 +20,36 @@ Promise.all([
       if (error) {
         throw error;
       } else {
-        console.log(`ℹ️ Найдено файлов: ${files.length}`);
-        for (const file of files) {
-          console.log(`ℹ️ Создаю сжатую копию ${input}/${file} в ${output}`);
-          await encodeFile(
-            `${process.cwd()}/${input}/${file}`,
-            `${process.cwd()}/${output}/${file}`,
-          )
-            .then(() => console.log(`✅  Создан файл ${output}/${file}`))
-            .catch(console.error);
-          console.log(
-            `\nℹ️ Копирую метаданные файла ${input}/${file} в ${output}/${file}`,
-          );
-          await copyMetadata(
-            `${process.cwd()}/${input}/${file}`,
-            `${process.cwd()}/${output}/${file}`,
-          )
-            .then(() =>
-              console.log(
-                `✅  Метаданные файла ${input}/${file} скопированы в ${output}/${file}`,
-              ),
+        if (files.length === 0) {
+          console.warn('⚠️ Нет файлов для обработки');
+          return;
+        } else {
+          console.log(`ℹ️ Найдено файлов: ${files.length}`);
+          for (const file of files) {
+            console.log(`ℹ️ Создаю сжатую копию ${input}/${file} в ${output}`);
+            await encodeFile(
+              `${process.cwd()}/${input}/${file}`,
+              `${process.cwd()}/${output}/${file}`,
             )
-            .catch(console.error);
-          console.log(
-            `\nℹ️ Обработано файлов: ${files.indexOf(file) + 1} из ${files.length}`,
-          );
+              .then(() => console.log(`✅  Создан файл ${output}/${file}`))
+              .catch(console.error);
+            console.log(
+              `\nℹ️ Копирую метаданные файла ${input}/${file} в ${output}/${file}`,
+            );
+            await copyMetadata(
+              `${process.cwd()}/${input}/${file}`,
+              `${process.cwd()}/${output}/${file}`,
+            )
+              .then(() =>
+                console.log(
+                  `✅  Метаданные файла ${input}/${file} скопированы в ${output}/${file}`,
+                ),
+              )
+              .catch(console.error);
+            console.log(
+              `\nℹ️ Обработано файлов: ${files.indexOf(file) + 1} из ${files.length}`,
+            );
+          }
         }
         console.log(
           `\n\n✅  Процесс завершён. Обработано файлов: ${files.length}`,
