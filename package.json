@@ -1,0 +1,37 @@
+{
+  "name": "mshrinker",
+  "version": "0.1.0",
+  "main": "dist/main.js",
+  "scripts": {
+    "watch": "tsx --watch src/main.ts",
+    "compile": "rm -rf dist && node esbuild.config.mjs",
+    "prettier:fix": "prettier . --write",
+    "prettier:check": "prettier . --check",
+    "lint:fix": "eslint ./src --fix",
+    "lint:check": "eslint ./src",
+    "build": "npm run compile && npm run prettier:fix && npm run lint:fix",
+    "start": "node dist/main.js",
+    "make": "npm run build && pkg . -t node18-macos-arm64 --output dist/mshrinker"
+  },
+  "bin": {
+    "mshrinker": "dist/main.js"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@eslint/js": "^9.27.0",
+    "@tsconfig/node20": "^20.1.5",
+    "@types/node": "^22.15.21",
+    "esbuild": "^0.25.4",
+    "eslint": "^9.27.0",
+    "eslint-config-prettier": "^10.1.5",
+    "globals": "^16.2.0",
+    "prettier": "^3.5.3",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.32.1"
+  }
+}
