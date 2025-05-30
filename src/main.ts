@@ -10,6 +10,7 @@ import allowedExtensions from './parseFileName/allowedExtensions';
 Promise.all([
   isToolAvailable('exiftool', '-ver'),
   isToolAvailable('ffmpeg', '-version'),
+  isToolAvailable('ffprobe', '-version'),
 ])
   .then(() => {
     const args = process.argv.slice(2);
