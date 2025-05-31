@@ -6,6 +6,7 @@ import copyMetadata from './copyMetadata';
 import encodeFile from './encodeFile';
 import parseFileName from './parseFileName/parseFileName';
 import allowedExtensions from './parseFileName/allowedExtensions';
+import checkOutputFile from './checkOutputFile';
 
 Promise.all([
   isToolAvailable('exiftool', '-ver'),
@@ -41,28 +42,37 @@ Promise.all([
               continue;
             }
             console.log(`ℹ️ Создаю сжатую копию ${input}/${file} в ${output}`);
-            const outputFileName = `${name}.${extension.toLowerCase() === 'm4v' ? 'mov' : extension}`;
+            const outputExtension =
+              extension.toLowerCase() === 'm4v' ? 'mov' : extension;
+            const outputFileName = `${name}.${outputExtension}`;
             await encodeFile(
               `${process.cwd()}/${input}/${file}`,
               `${process.cwd()}/${output}/${outputFileName}`,
-            )
-              .then(() =>
-                console.log(`✅  Создан файл ${output}/${outputFileName}`),
-              )
-              .catch(console.error);
-            console.log(
-              `\nℹ️ Копирую метаданные файла ${input}/${file} в ${output}/${outputFileName}`,
-            );
-            await copyMetadata(
+            ).catch(console.error);
+            const { isOutputFileNew } = await checkOutputFile(
               `${process.cwd()}/${input}/${file}`,
               `${process.cwd()}/${output}/${outputFileName}`,
-            )
-              .then(() =>
-                console.log(
-                  `✅  Метаданные файла ${input}/${file} скопированы в ${output}/${outputFileName}`,
-                ),
+            );
+            if (isOutputFileNew) {
+              console.log(
+                `\nℹ️ Копирую метаданные файла ${input}/${file} в ${output}/${outputFileName}`,
+              );
+              await copyMetadata(
+                `${process.cwd()}/${input}/${file}`,
+                `${process.cwd()}/${output}/${outputFileName}`,
               )
-              .catch(console.error);
+                .then(() =>
+                  console.log(
+                    `✅  Метаданные файла ${input}/${file} скопированы в ${output}/${outputFileName}`,
+                  ),
+                )
+                .catch(console.error);
+            } else {
+              console.log(
+                `\nℹ️ Пропускаю этап копирования метаданных: файл ${output}/${outputFileName} — копия файла ${input}/${file}`,
+              );
+            }
+
             console.log(
               `\nℹ️ Обработано файлов: ${files.indexOf(file) + 1} из ${files.length}`,
             );

@@ -60,19 +60,18 @@ export default async function encodeFile(source: string, target: string) {
         ]);
       }
 
-      ffmpeg.stdout.on('data', (data) => {
-        console.log(`stdout: ${data}`);
-      });
-
       ffmpeg.stderr.on('data', (data) => {
         console.error(`stderr: ${data}`);
       });
 
       ffmpeg.on('close', (code: number) => {
         if (code === 0) {
+          console.log(`✅  Создан файл ${target}`);
           resolve();
         } else {
-          reject(new Error(`FFmpeg exited with code ${code}`));
+          reject(
+            new Error(`❌  FFmpeg аварийно завершил работу. Код: ${code}`),
+          );
         }
       });
     });

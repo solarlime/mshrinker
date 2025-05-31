@@ -11,10 +11,6 @@ export default async function copyMetadata(source: string, target: string) {
       target,
     ]);
 
-    exiftool.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`);
-    });
-
     exiftool.stderr.on('data', (data) => {
       console.error(`stderr: ${data}`);
     });
@@ -23,7 +19,9 @@ export default async function copyMetadata(source: string, target: string) {
       if (code === 0) {
         resolve();
       } else {
-        reject(new Error(`Exiftool exited with code ${code}`));
+        reject(
+          new Error(`❌  Exiftool аварийно завершил работу. Код: ${code}`),
+        );
       }
     });
   });
