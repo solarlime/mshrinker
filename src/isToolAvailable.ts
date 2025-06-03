@@ -7,10 +7,10 @@ export default async function isToolAvailable(
   return new Promise((resolve, reject) => {
     const tool = spawn(command, args);
 
-    tool.on('error', () => reject(`❌ ${command} не найден`));
+    tool.on('error', () => reject(`❌  ${command} не найден`));
 
     tool.stdout.on('data', (data) => {
-      console.log(`✅ ${command} найден, ${data.toString().split('\n')[0]}`);
+      console.log(`✅  ${command} найден, ${data.toString().split('\n')[0]}`);
     });
 
     tool.on('close', (code) => {

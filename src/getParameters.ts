@@ -1,6 +1,6 @@
 import { spawn } from 'node:child_process';
 
-export default async function getDimensions(source: string) {
+export default async function getParameters(source: string) {
   return new Promise<{ width: number; height: number }>((resolve, reject) => {
     const ffprobe = spawn('ffprobe', [
       '-v',
@@ -28,7 +28,10 @@ export default async function getDimensions(source: string) {
       if (code === 0) {
         const stringData = buffer.join('');
         const { streams } = JSON.parse(stringData);
-        resolve({ width: streams[0].width, height: streams[0].height });
+        resolve({
+          width: streams[0].width,
+          height: streams[0].height,
+        });
       } else {
         reject(new Error(`FFprobe exited with code ${code}`));
       }
