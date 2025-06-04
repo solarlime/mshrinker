@@ -17,7 +17,7 @@ export default function checkOutputFile(
           resolve({ isOutputFileNew: true });
         } else {
           console.warn(
-            `⚠️ Исходный файл меньше нового (${inputSize} байт против ${outputSize}). Использую исходный файл`,
+            `⚠️ Новый файл больше исходного (${inputSize} байт против ${outputSize}). Использую исходный файл`,
           );
           try {
             await copyFile(source, target);

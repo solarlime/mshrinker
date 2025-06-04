@@ -6,7 +6,7 @@ export default async function encodeFile(
   width: number,
   height: number,
 ) {
-  return new Promise<void>((resolve, reject) => {
+  return new Promise<{ success: boolean }>((resolve, reject) => {
     let ffmpeg: ChildProcessWithoutNullStreams;
 
     if ((width < 1280 && height < 720) || (width < 720 && height < 1280)) {
@@ -63,20 +63,24 @@ export default async function encodeFile(
       ]);
     }
 
-      ffmpeg.stderr.on('data', (data) => {
-        console.error(`stderr: ${data}`);
-      });
+    let isResultBiggerThanSource = false;
 
-      ffmpeg.on('close', (code: number) => {
-        if (code === 0) {
-          console.log(`✅  Создан файл ${target}`);
-          resolve();
-        } else {
-          reject(
-            new Error(`❌  FFmpeg аварийно завершил работу. Код: ${code}`),
-          );
-        }
-      });
+    ffmpeg.stderr.on('data', (data) => {
+      console.error(`stderr: ${data}`);
+      if (data.includes('(No space left on device')) {
+        isResultBiggerThanSource = true;
+      }
+    });
+
+    ffmpeg.on('close', (code: number) => {
+      if (code === 0) {
+        console.log(`✅  Создан файл ${target}`);
+        resolve({ success: true });
+      } else if (isResultBiggerThanSource) {
+        resolve({ success: false });
+      } else {
+        reject(new Error(`❌  FFmpeg аварийно завершил работу. Код: ${code}`));
+      }
     });
   });
 }
