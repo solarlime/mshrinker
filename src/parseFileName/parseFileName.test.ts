@@ -1,5 +1,5 @@
-import { describe, test } from 'mocha';
-import { expect } from 'chai';
+import { describe, test } from 'node:test';
+import assert from 'node:assert';
 import allowedExtensions from './allowedExtensions';
 import parseFileName from './parseFileName';
 
@@ -70,8 +70,8 @@ describe('parseFileName', () => {
   testCases.forEach((file) => {
     test(`${file.case}`, () => {
       const { name, extension } = parseFileName(file.case);
-      expect(name).to.be.equal(file.expectedName);
-      expect(extension).to.be.equal(file.expectedExtension);
+      assert.strictEqual(name, file.expectedName);
+      assert.strictEqual(extension, file.expectedExtension);
     });
   });
 });
