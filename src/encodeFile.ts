@@ -1,4 +1,5 @@
 import { ChildProcessWithoutNullStreams, spawn } from 'node:child_process';
+import { errorMessage, infoMessage, successMessage } from './highlighting';
 
 export default async function encodeFile(
   source: string,
@@ -11,7 +12,9 @@ export default async function encodeFile(
 
     if ((width < 1280 && height < 720) || (width < 720 && height < 1280)) {
       console.log(
-        `ℹ️ Низкое разрешение (${width}x${height}), используется кодек libx265`,
+        infoMessage(
+          `Низкое разрешение (${width}x${height}), используется кодек libx265`,
+        ),
       );
       ffmpeg = spawn('ffmpeg', [
         '-hide_banner',
@@ -37,7 +40,9 @@ export default async function encodeFile(
       ]);
     } else {
       console.log(
-        `ℹ️ Высокое разрешение (${width}x${height}), используется кодек hevc_videotoolbox`,
+        infoMessage(
+          `Высокое разрешение (${width}x${height}), используется кодек hevc_videotoolbox`,
+        ),
       );
       ffmpeg = spawn('ffmpeg', [
         '-hide_banner',
@@ -74,12 +79,16 @@ export default async function encodeFile(
 
     ffmpeg.on('close', (code: number) => {
       if (code === 0) {
-        console.log(`✅  Создан файл ${target}`);
+        console.log(successMessage(`Создан файл ${target}`));
         resolve({ success: true });
       } else if (isResultBiggerThanSource) {
         resolve({ success: false });
       } else {
-        reject(new Error(`❌  FFmpeg аварийно завершил работу. Код: ${code}`));
+        reject(
+          new Error(
+            errorMessage(`FFmpeg аварийно завершил работу. Код: ${code}`),
+          ),
+        );
       }
     });
   });

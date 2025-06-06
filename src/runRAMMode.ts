@@ -3,6 +3,12 @@ import { execSync } from 'node:child_process';
 import encodeFile from './encodeFile';
 import { copyFile } from 'node:fs/promises';
 import copyMetadata from './copyMetadata';
+import {
+  errorMessage,
+  infoMessage,
+  successMessage,
+  warningMessage,
+} from './highlighting';
 
 export default async function runRAMMode(
   inputFolder: string,
@@ -24,15 +30,15 @@ export default async function runRAMMode(
   // hdutil получает размер в блоках, 1 блок = 512 байт
   const blocks = Math.ceil(size / 512);
 
-  console.log('💽 Создание RAM-диска...');
+  console.log(infoMessage('Создание RAM-диска...'));
   diskId = execSync(`hdiutil attach -nomount ram://${blocks}`)
     .toString()
     .trim();
-  console.log(`📀 Диск подключён: ${diskId}`);
+  console.log(infoMessage(`Диск подключён: ${diskId}`));
 
-  console.log('📝 Форматирование в HFS+...');
+  console.log(infoMessage('Форматирование в HFS+...'));
   execSync(`diskutil erasevolume HFS+ ${ramDisk} ${diskId}`);
-  console.log(`📀 Диск ${mountPath} готов к использованию!`);
+  console.log(infoMessage(`Диск ${mountPath} готов к использованию!`));
   try {
     const { success } = await encodeFile(
       `${inputFolder}/${inputFile}`,
@@ -41,33 +47,41 @@ export default async function runRAMMode(
       height,
     );
     if (success) {
-      console.log(`✅  Файл ${inputFile} успешно сжат. Сохраняю на диск`);
+      console.log(
+        successMessage(`Файл ${inputFile} успешно сжат. Сохраняю на диск`),
+      );
       await copyFile(tempPath, `${outputFolder}/${outputFile}`);
       console.log(
-        `✅  Сжатый файл ${outputFile} успешно сохранён в ${outputFolder}`,
+        successMessage(
+          `Сжатый файл ${outputFile} успешно сохранён в ${outputFolder}`,
+        ),
       );
-      console.log(`ℹ️ Копирую метаданные файла ${inputFile}`);
+      console.log(infoMessage(`Копирую метаданные файла ${inputFile}`));
       await copyMetadata(
         `${inputFolder}/${inputFile}`,
         `${outputFolder}/${outputFile}`,
       );
-      console.log(`✅  Метаданные скопированы в ${outputFile}`);
+      console.log(successMessage(`Метаданные скопированы в ${outputFile}`));
     } else {
-      console.log(`⚠️ Новый файл больше исходного. Использую исходный файл`);
+      console.log(
+        warningMessage(`Новый файл больше исходного. Использую исходный файл`),
+      );
       await copyFile(source, target);
-      console.log(`✅  Создан файл ${target} — копия ${source}`);
+      console.log(successMessage(`Создан файл ${target} — копия ${source}`));
     }
   } catch (e) {
-    console.error(e);
+    console.error(errorMessage(e));
   } finally {
-    console.log('🔌 Размонтирование RAM-диска...');
+    console.log(infoMessage('Размонтирование RAM-диска...'));
     try {
       execSync(`diskutil eject ${mountPath}`);
-      console.log('🧹 RAM-диск отключён');
+      console.log(infoMessage('RAM-диск отключён'));
     } catch (ejectErr) {
       console.warn(
-        '⚠️ Не удалось размонтировать RAM-диск:',
-        (ejectErr as Error).message,
+        warningMessage(
+          'Не удалось размонтировать RAM-диск:',
+          (ejectErr as Error).message,
+        ),
       );
     }
   }

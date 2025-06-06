@@ -1,4 +1,10 @@
 import { stat, copyFile } from 'node:fs/promises';
+import {
+  errorMessage,
+  successMessage,
+  warningMessage,
+  infoMessage,
+} from './highlighting';
 
 export default function checkOutputFile(
   source: string,
@@ -12,25 +18,35 @@ export default function checkOutputFile(
         const outputSize = outputStats.size;
         if (inputSize > outputSize) {
           console.log(
-            `ℹ️ Новый файл меньше исходного (${outputSize} байт против ${inputSize}). Использую новый файл`,
+            infoMessage(
+              `Новый файл меньше исходного (${outputSize} байт против ${inputSize}). Использую новый файл`,
+            ),
           );
           resolve({ isOutputFileNew: true });
         } else {
           console.warn(
-            `⚠️ Новый файл больше исходного (${inputSize} байт против ${outputSize}). Использую исходный файл`,
+            warningMessage(
+              `Новый файл больше исходного (${inputSize} байт против ${outputSize}). Использую исходный файл`,
+            ),
           );
           try {
             await copyFile(source, target);
-            console.log(`✅  Создан файл ${target} — копия ${source}`);
+            console.log(
+              successMessage(`Создан файл ${target} — копия ${source}`),
+            );
             resolve({ isOutputFileNew: false });
           } catch (copyErr) {
             console.error(
-              `❌  Ошибка копирования файла: ${(copyErr as Error).message}`,
+              errorMessage(
+                `Ошибка копирования файла: ${(copyErr as Error).message}`,
+              ),
             );
             reject(copyErr);
           }
         }
       })
-      .catch(() => reject(new Error('❌  Ошибка получения размеров файлов')));
+      .catch(() =>
+        reject(new Error(errorMessage('Ошибка получения размеров файлов'))),
+      );
   });
 }

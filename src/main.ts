@@ -11,7 +11,14 @@ import checkOutputFile from './checkOutputFile';
 import getParameters from './getParameters';
 import defineFolders from './defineFolders';
 import runRAMMode from './runRAMMode';
+import {
+  errorMessage,
+  infoMessage,
+  warningMessage,
+  successMessage,
+} from './highlighting';
 
+console.log('\n');
 const args = process.argv.slice(2);
 if (args[0] === '--help' || args[0] === '-h' || args[0] === undefined) {
   console.log('Здесь будет справка по использованию скрипта');
@@ -27,25 +34,32 @@ if (args[0] === '--help' || args[0] === '-h' || args[0] === undefined) {
       fs.readdir(inputFolder, async (error, files) => {
         if (error) {
           throw new Error(
-            '❌  Ошибка: не удалось прочитать папку с исходными файлами',
+            errorMessage(
+              'Ошибка: не удалось прочитать папку с исходными файлами',
+            ),
           );
         } else {
           if (files.length === 0) {
-            console.warn('⚠️ Нет файлов для обработки');
+            console.warn(warningMessage('Нет файлов для обработки'));
             return;
           } else {
-            console.log(`ℹ️ Найдено файлов: ${files.length}`);
+            console.log(infoMessage(`Найдено файлов: ${files.length}`));
             for (const inputFile of files) {
+              console.log('\n');
               const { name, extension } = parseFileName(inputFile);
 
               if (inputFile.startsWith('.')) {
-                console.warn(`⚠️ Пропускаю скрытый файл ${inputFile}`);
+                console.warn(
+                  warningMessage(`Пропускаю скрытый файл ${inputFile}`),
+                );
                 continue;
               }
 
               if (!extension || !allowedExtensions.includes(extension)) {
                 console.warn(
-                  `⚠️ Пропускаю файл ${inputFile} с недопустимым расширением`,
+                  warningMessage(
+                    `Пропускаю файл ${inputFile} с недопустимым расширением`,
+                  ),
                 );
                 continue;
               }
@@ -63,7 +77,9 @@ if (args[0] === '--help' || args[0] === '-h' || args[0] === undefined) {
 
               if (osType === 'darwin' && Math.floor(totalMemory / 4) > size) {
                 console.log(
-                  `🔥 Файл ${inputFile} возможно обработать без промежуточной записи на SSD!`,
+                  successMessage(
+                    `Файл ${inputFile} возможно обработать без промежуточной записи на SSD!`,
+                  ),
                 );
                 await runRAMMode(
                   inputFolder,
@@ -76,7 +92,9 @@ if (args[0] === '--help' || args[0] === '-h' || args[0] === undefined) {
                 );
               } else {
                 console.log(
-                  `ℹ️ Создаю сжатую копию ${inputFile} в ${outputFolder}`,
+                  infoMessage(
+                    `Создаю сжатую копию ${inputFile} в ${outputFolder}`,
+                  ),
                 );
                 await encodeFile(
                   `${inputFolder}/${inputFile}`,
@@ -90,29 +108,41 @@ if (args[0] === '--help' || args[0] === '-h' || args[0] === undefined) {
                   `${outputFolder}/${outputFile}`,
                 );
                 if (isOutputFileNew) {
-                  console.log(`ℹ️ Копирую метаданные файла ${inputFile}`);
+                  console.log(
+                    infoMessage(`Копирую метаданные файла ${inputFile}`),
+                  );
                   await copyMetadata(
                     `${inputFolder}/${inputFile}`,
                     `${outputFolder}/${outputFile}`,
                   )
                     .then(() =>
-                      console.log(`✅  Метаданные скопированы в ${outputFile}`),
+                      console.log(
+                        successMessage(
+                          `Метаданные скопированы в ${outputFile}`,
+                        ),
+                      ),
                     )
                     .catch(console.error);
                 } else {
                   console.log(
-                    `ℹ️ Пропускаю этап копирования метаданных: файл ${inputFile} не был изменён`,
+                    infoMessage(
+                      `Пропускаю этап копирования метаданных: файл ${inputFile} не был изменён`,
+                    ),
                   );
                 }
 
                 console.log(
-                  `ℹ️ Обработано файлов: ${files.indexOf(inputFile) + 1} из ${files.length}`,
+                  infoMessage(
+                    `Обработано файлов: ${files.indexOf(inputFile) + 1} из ${files.length}`,
+                  ),
                 );
               }
             }
           }
           console.log(
-            `\n\n✅  Процесс завершён. Обработано файлов: ${files.length}`,
+            successMessage(
+              `\n\nПроцесс завершён. Обработано файлов: ${files.length}`,
+            ),
           );
         }
       });

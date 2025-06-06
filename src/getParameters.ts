@@ -1,4 +1,5 @@
 import { spawn } from 'node:child_process';
+import { errorMessage } from './highlighting';
 
 export default async function getParameters(source: string) {
   return new Promise<{ width: number; height: number; size: number }>(
@@ -37,7 +38,7 @@ export default async function getParameters(source: string) {
             size: format.size,
           });
         } else {
-          reject(new Error(`FFprobe exited with code ${code}`));
+          reject(new Error(errorMessage(`FFprobe exited with code ${code}`)));
         }
       });
     },

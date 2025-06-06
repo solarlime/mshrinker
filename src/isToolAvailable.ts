@@ -1,4 +1,5 @@
 import { spawn } from 'node:child_process';
+import { errorMessage, successMessage } from './highlighting';
 
 export default async function isToolAvailable(
   command: string,
@@ -7,10 +8,12 @@ export default async function isToolAvailable(
   return new Promise((resolve, reject) => {
     const tool = spawn(command, args);
 
-    tool.on('error', () => reject(`❌  ${command} не найден`));
+    tool.on('error', () => reject(errorMessage(`${command} не найден`)));
 
     tool.stdout.on('data', (data) => {
-      console.log(`✅  ${command} найден, ${data.toString().split('\n')[0]}`);
+      console.log(
+        successMessage(`${command} найден, ${data.toString().split('\n')[0]}`),
+      );
     });
 
     tool.on('close', (code) => {

@@ -1,4 +1,5 @@
 import { spawn } from 'node:child_process';
+import { errorMessage } from './highlighting';
 
 export default async function copyMetadata(source: string, target: string) {
   return new Promise<void>((resolve, reject) => {
@@ -20,7 +21,9 @@ export default async function copyMetadata(source: string, target: string) {
         resolve();
       } else {
         reject(
-          new Error(`❌  Exiftool аварийно завершил работу. Код: ${code}`),
+          new Error(
+            errorMessage(`Exiftool аварийно завершил работу. Код: ${code}`),
+          ),
         );
       }
     });
