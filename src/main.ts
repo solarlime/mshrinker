@@ -75,7 +75,12 @@ if (args[0] === '--help' || args[0] === '-h' || args[0] === undefined) {
               const osType = os.platform();
               const totalMemory = os.totalmem();
 
-              if (osType === 'darwin' && Math.floor(totalMemory / 4) > size) {
+              if (
+                osType === 'darwin' &&
+                Math.floor(totalMemory / 4) > size &&
+                // Если меньше, то есть риск, что HFS+ не создастся
+                size >= 614400
+              ) {
                 console.log(
                   successMessage(
                     `Файл ${inputFile} возможно обработать без промежуточной записи на SSD!`,
