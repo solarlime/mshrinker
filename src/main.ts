@@ -7,7 +7,7 @@ import copyMetadata from './copyMetadata';
 import encodeFile from './encodeFile';
 import parseFileName from './parseFileName/parseFileName';
 import allowedExtensions from './parseFileName/allowedExtensions';
-import checkOutputFile from './checkOutputFile';
+import checkOutputFile from './checkOutputFile/checkOutputFile';
 import getParameters from './getParameters';
 import defineFolders from './defineFolders';
 import runRAMMode from './runRAMMode';

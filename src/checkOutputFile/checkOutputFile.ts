@@ -4,7 +4,7 @@ import {
   successMessage,
   warningMessage,
   infoMessage,
-} from './highlighting';
+} from '../highlighting';
 
 export default function checkOutputFile(
   source: string,
