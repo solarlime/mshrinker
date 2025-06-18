@@ -1,6 +1,6 @@
 import path from 'node:path';
 import fs from 'node:fs';
-import { errorMessage, infoMessage } from './highlighting';
+import { errorMessage, infoMessage } from '../highlighting';
 
 export default function defineFolders(args: string[]): {
   inputFolder: string;

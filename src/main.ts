@@ -9,7 +9,7 @@ import parseFileName from './parseFileName/parseFileName';
 import allowedExtensions from './parseFileName/allowedExtensions';
 import checkOutputFile from './checkOutputFile/checkOutputFile';
 import getParameters from './getParameters';
-import defineFolders from './defineFolders';
+import defineFolders from './defineFolders/defineFolders';
 import runRAMMode from './runRAMMode';
 import {
   errorMessage,
