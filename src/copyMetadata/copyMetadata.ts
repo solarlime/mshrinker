@@ -1,9 +1,9 @@
-import { spawn } from 'node:child_process';
-import { errorMessage } from './highlighting';
+import child_process from 'node:child_process';
+import { errorMessage } from '../highlighting';
 
 export default async function copyMetadata(source: string, target: string) {
   return new Promise<void>((resolve, reject) => {
-    const exiftool = spawn('exiftool', [
+    const exiftool = child_process.spawn('exiftool', [
       '-TagsFromFile',
       source,
       '-all:all',

@@ -2,7 +2,7 @@ import { join } from 'node:path';
 import { execSync } from 'node:child_process';
 import encodeFile from './encodeFile';
 import { copyFile } from 'node:fs/promises';
-import copyMetadata from './copyMetadata';
+import copyMetadata from './copyMetadata/copyMetadata';
 import {
   errorMessage,
   infoMessage,
