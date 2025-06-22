@@ -8,7 +8,7 @@ import encodeFile from './encodeFile';
 import parseFileName from './parseFileName/parseFileName';
 import allowedExtensions from './parseFileName/allowedExtensions';
 import checkOutputFile from './checkOutputFile/checkOutputFile';
-import getParameters from './getParameters';
+import getParameters from './getParameters/getParameters';
 import defineFolders from './defineFolders/defineFolders';
 import runRAMMode from './runRAMMode';
 import {

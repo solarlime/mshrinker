@@ -1,10 +1,10 @@
-import { spawn } from 'node:child_process';
-import { errorMessage } from './highlighting';
+import child_process from 'node:child_process';
+import { errorMessage } from '../highlighting';
 
 export default async function getParameters(source: string) {
   return new Promise<{ width: number; height: number; size: number }>(
     (resolve, reject) => {
-      const ffprobe = spawn('ffprobe', [
+      const ffprobe = child_process.spawn('ffprobe', [
         '-v',
         'error',
         '-select_streams',
@@ -31,12 +31,18 @@ export default async function getParameters(source: string) {
       ffprobe.on('close', (code: number) => {
         if (code === 0) {
           const stringData = buffer.join('');
-          const { streams, format } = JSON.parse(stringData);
-          resolve({
-            width: streams[0].width,
-            height: streams[0].height,
-            size: format.size,
-          });
+          try {
+            const { streams, format } = JSON.parse(stringData);
+            resolve({
+              width: streams[0].width,
+              height: streams[0].height,
+              size: format.size,
+            });
+          } catch (error) {
+            reject(
+              new Error(errorMessage(`Error: ${(error as Error).message}`)),
+            );
+          }
         } else {
           reject(new Error(errorMessage(`FFprobe exited with code ${code}`)));
         }
