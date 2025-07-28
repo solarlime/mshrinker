@@ -10,9 +10,10 @@
     "lint:fix": "eslint ./src --fix",
     "lint:check": "eslint ./src",
     "test": "node -r tsx/cjs --test src/**/*.test.ts",
-    "build": "npm run compile && npm run prettier:fix && npm run lint:fix",
-    "start": "node dist/main.js",
-    "make": "npm run build && pkg . -t node18-macos-arm64 --output dist/mshrinker"
+    "build": "npm run prettier:fix && npm run lint:fix && npm run compile",
+    "start": "npm run build && node dist/main.js",
+    "bake": "VERSION=$(node -p \"require('./package.json').version.split('.').join('_')\") && pkg . -t node18-macos-arm64,node18-macos-x64 --output dist/mshrinker-$VERSION-macos --no-bytecode",
+    "make": "npm run build && npm run bake"
   },
   "bin": {
     "mshrinker": "dist/main.js"
