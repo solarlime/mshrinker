@@ -23,7 +23,7 @@ const args = process.argv.slice(2);
 if (args[0] === '--help' || args[0] === '-h' || args[0] === undefined) {
   console.log(`
 MShrinker — утилита для сжатия видеофайлов с копированием метаданных.
-Версия: 0.1.0.
+Версия: 0.1.1.
 
 —————
 
