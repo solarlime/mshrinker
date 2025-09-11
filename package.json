@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "main": "dist/main.js",
   "scripts": {
-    "watch": "tsx --watch src/main.ts",
     "compile": "rm -rf dist && node esbuild.config.mjs",
     "prettier:fix": "prettier . --write",
     "prettier:check": "prettier . --check",
@@ -12,7 +11,7 @@
     "test": "node -r tsx/cjs --test src/**/*.test.ts",
     "build": "npm run prettier:fix && npm run lint:fix && npm run compile",
     "start": "npm run build && node dist/main.js",
-    "bake": "VERSION=$(node -p \"require('./package.json').version.split('.').join('_')\") && pkg . -t node18-macos-arm64,node18-macos-x64 --output dist/mshrinker-$VERSION-macos --no-bytecode",
+    "bake": "VERSION=$(node -p \"require('./package.json').version.split('.').join('_')\") && pkg . -t node20-macos-arm64,node20-macos-x64 --output dist/mshrinker-$VERSION-macos --no-bytecode",
     "make": "npm run build && npm run bake"
   },
   "bin": {
@@ -27,6 +26,7 @@
     "@eslint/js": "^9.27.0",
     "@tsconfig/node20": "^20.1.5",
     "@types/node": "^22.15.21",
+    "@yao-pkg/pkg": "^6.6.0",
     "esbuild": "^0.25.4",
     "eslint": "^9.27.0",
     "eslint-config-prettier": "^10.1.5",

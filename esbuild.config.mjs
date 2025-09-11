@@ -4,6 +4,7 @@ await esbuild.build({
   entryPoints: ['./src/main.js'],
   bundle: true,
   platform: 'node',
-  target: ['node18'],
+  target: ['node20'],
+  minify: true,
   outfile: 'dist/main.js',
 });
