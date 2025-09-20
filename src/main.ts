@@ -6,7 +6,11 @@ import isToolAvailable from './isToolAvailable';
 import copyMetadata from './copyMetadata/copyMetadata';
 import encodeFile from './encodeFile';
 import parseFileName from './parseFileName/parseFileName';
-import allowedExtensions from './parseFileName/allowedExtensions';
+import {
+  allowedExtensions,
+  AllowedExtensionsEnum,
+} from './parseFileName/allowedExtensions';
+import defineOutputExtension from './defineOutputExtension';
 import checkOutputFile from './checkOutputFile/checkOutputFile';
 import getParameters from './getParameters/getParameters';
 import defineFolders from './defineFolders/defineFolders';
@@ -74,7 +78,10 @@ mshrinker [папка с исходными файлами] [папка для �
                 continue;
               }
 
-              if (!extension || !allowedExtensions.includes(extension)) {
+              if (
+                !extension ||
+                !allowedExtensions.includes(extension as AllowedExtensionsEnum)
+              ) {
                 console.warn(
                   warningMessage(
                     `Пропускаю файл ${inputFile} с недопустимым расширением`,
@@ -83,9 +90,9 @@ mshrinker [папка с исходными файлами] [папка для �
                 continue;
               }
 
-              // Exiftool не может записывать метаданные в контейнер m4v. Используем mov
-              const outputExtension =
-                extension.toLowerCase() === 'm4v' ? 'mov' : extension;
+              const outputExtension = defineOutputExtension(
+                extension as AllowedExtensionsEnum,
+              );
               const outputFile = `${name}.${outputExtension}`;
               const { width, height, size } = await getParameters(
                 `${inputFolder}/${inputFile}`,

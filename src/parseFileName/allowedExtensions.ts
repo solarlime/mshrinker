@@ -1,3 +1,9 @@
-const allowedExtensions = ['mp4', 'mov', 'm4v'];
+enum AllowedExtensionsEnum {
+  MP4 = 'mp4',
+  MOV = 'mov',
+  M4V = 'm4v',
+}
 
-export default allowedExtensions;
+const allowedExtensions = Object.values(AllowedExtensionsEnum);
+
+export { allowedExtensions, AllowedExtensionsEnum };

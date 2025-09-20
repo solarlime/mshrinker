@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert';
-import allowedExtensions from './allowedExtensions';
+import { allowedExtensions } from './allowedExtensions';
 import parseFileName from './parseFileName';
 
 const testCases = [
