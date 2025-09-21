@@ -6,10 +6,7 @@ import isToolAvailable from './isToolAvailable';
 import copyMetadata from './copyMetadata/copyMetadata';
 import encodeFile from './encodeFile';
 import parseFileName from './parseFileName/parseFileName';
-import {
-  allowedExtensions,
-  AllowedExtensionsEnum,
-} from './parseFileName/allowedExtensions';
+import { allowedExtensions, AllowedExtensionsEnum } from './allowedExtensions';
 import defineOutputExtension from './defineOutputExtension';
 import checkOutputFile from './checkOutputFile/checkOutputFile';
 import getParameters from './getParameters/getParameters';
@@ -54,7 +51,7 @@ mshrinker [папка с исходными файлами] [папка для �
     .then(() => {
       const { inputFolder, outputFolder } = defineFolders(args);
 
-      fs.readdir(inputFolder, async (error, files) => {
+      fs.readdir(inputFolder, async (error, allFiles) => {
         if (error) {
           throw new Error(
             errorMessage(
@@ -62,6 +59,12 @@ mshrinker [папка с исходными файлами] [папка для �
             ),
           );
         } else {
+          const files = allFiles.filter((file) => {
+            const lowerCaseFile = file.toLowerCase();
+            return !!allowedExtensions.find((allowedExtension) =>
+              lowerCaseFile.endsWith(`.${allowedExtension}`),
+            );
+          });
           if (files.length === 0) {
             console.warn(warningMessage('Нет файлов для обработки'));
             return;
@@ -74,18 +77,6 @@ mshrinker [папка с исходными файлами] [папка для �
               if (inputFile.startsWith('.')) {
                 console.warn(
                   warningMessage(`Пропускаю скрытый файл ${inputFile}`),
-                );
-                continue;
-              }
-
-              if (
-                !extension ||
-                !allowedExtensions.includes(extension as AllowedExtensionsEnum)
-              ) {
-                console.warn(
-                  warningMessage(
-                    `Пропускаю файл ${inputFile} с недопустимым расширением`,
-                  ),
                 );
                 continue;
               }

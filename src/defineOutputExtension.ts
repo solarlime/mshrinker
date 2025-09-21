@@ -1,4 +1,4 @@
-import { AllowedExtensionsEnum } from './parseFileName/allowedExtensions';
+import { AllowedExtensionsEnum } from './allowedExtensions';
 
 const defineOutputExtension = (extension: AllowedExtensionsEnum) => {
   switch (extension) {
