@@ -18,6 +18,7 @@ import {
   warningMessage,
   successMessage,
 } from './highlighting';
+import { defineOutputName } from './defineOutputName/defineOutputName';
 
 console.log('\n');
 const args = process.argv.slice(2);
@@ -84,7 +85,11 @@ mshrinker [папка с исходными файлами] [папка для �
               const outputExtension = defineOutputExtension(
                 extension as AllowedExtensionsEnum,
               );
-              const outputFile = `${name}.${outputExtension}`;
+              const outputFile = await defineOutputName(
+                outputFolder,
+                name as string,
+                outputExtension,
+              );
               const { width, height, size } = await getParameters(
                 `${inputFolder}/${inputFile}`,
               );
