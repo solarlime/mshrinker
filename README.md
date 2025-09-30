@@ -19,7 +19,7 @@
 - Распакуйте архив с программой.
 - Запустите утилиту командой `./mshrinker-[версия] [папка с исходными файлами] [папка для сохранения сжатых файлов]`.
 
-Пример: `./mshrinker-0_1_1-macos-arm64 input_folder /Users/user/output_folder`.
+Пример: `./mshrinker-0_1_2-macos-arm64 input_folder /Users/user/output_folder`.
 
 ## Проблемы:
 
