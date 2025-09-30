@@ -35,8 +35,6 @@ const testCases = [
   },
 ];
 
-// mock.method(fs, 'copyFile', () => Promise.resolve());
-
 describe('checkOutputFile', () => {
   testCases.forEach((testCase) => {
     test(testCase.name, async (test) => {
