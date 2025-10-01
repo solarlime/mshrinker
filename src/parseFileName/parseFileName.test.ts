@@ -30,6 +30,11 @@ const testCases = [
     expectedExtension: allowedExtensions[0],
   },
   {
+    case: `.file.${allowedExtensions[0]}`,
+    expectedName: '.file',
+    expectedExtension: allowedExtensions[0],
+  },
+  {
     case: `file.something.${allowedExtensions[0]}`,
     expectedName: 'file.something',
     expectedExtension: allowedExtensions[0],
