@@ -6,7 +6,6 @@ export default async function copyMetadata(source: string, target: string) {
     const exiftool = child_process.spawn('exiftool', [
       '-TagsFromFile',
       source,
-      '-all:all',
       '-overwrite_original',
       '-extractEmbedded',
       target,

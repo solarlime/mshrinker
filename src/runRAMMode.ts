@@ -9,16 +9,21 @@ import {
   successMessage,
   warningMessage,
 } from './highlighting';
+import { AllowedExtensionsEnum } from './allowedExtensions';
+import defineMetaFile from './defineMetaFile/defineMetaFile';
 
 export default async function runRAMMode(
   inputFolder: string,
-  inputFile: string,
+  inputName: string,
+  inputExtension: AllowedExtensionsEnum,
   outputFolder: string,
   outputFile: string,
   size: number,
   width: number,
   height: number,
+  thmFiles: string[],
 ) {
+  const inputFile = `${inputName}.${inputExtension}`;
   let diskId = null;
   const ramDisk = outputFile;
   const mountPath = `/Volumes/${ramDisk}`;
@@ -56,9 +61,14 @@ export default async function runRAMMode(
           `Сжатый файл ${outputFile} успешно сохранён в ${outputFolder}`,
         ),
       );
-      console.log(infoMessage(`Копирую метаданные файла ${inputFile}`));
+      const metaFile = defineMetaFile(
+        inputFile,
+        inputName,
+        inputExtension,
+        thmFiles,
+      );
       await copyMetadata(
-        `${inputFolder}/${inputFile}`,
+        `${inputFolder}/${metaFile}`,
         `${outputFolder}/${outputFile}`,
       );
       console.log(successMessage(`Метаданные скопированы в ${outputFile}`));

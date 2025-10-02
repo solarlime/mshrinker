@@ -2,7 +2,7 @@ import { readdir } from 'node:fs/promises';
 import { errorMessage } from '../highlighting';
 import { AllowedExtensionsEnum } from '../allowedExtensions';
 
-export const defineOutputName = async (
+const defineOutputName = async (
   outputFolder: string,
   nameToFind: string,
   extension: AllowedExtensionsEnum,
@@ -28,3 +28,5 @@ export const defineOutputName = async (
     duplicates = null;
   }
 };
+
+export default defineOutputName;

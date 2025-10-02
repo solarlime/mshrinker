@@ -18,7 +18,8 @@ import {
   warningMessage,
   successMessage,
 } from './highlighting';
-import { defineOutputName } from './defineOutputName/defineOutputName';
+import defineOutputName from './defineOutputName/defineOutputName';
+import defineMetaFile from './defineMetaFile/defineMetaFile';
 
 console.log('\n');
 const args = process.argv.slice(2);
@@ -60,8 +61,13 @@ mshrinker [папка с исходными файлами] [папка для �
             ),
           );
         } else {
+          const thmFiles: Array<string> = [];
           const files = allFiles.filter((file) => {
             const lowerCaseFile = file.toLowerCase();
+            if (lowerCaseFile.endsWith('.thm')) {
+              thmFiles.push(file);
+              return false;
+            }
             return !!allowedExtensions.find((allowedExtension) =>
               lowerCaseFile.endsWith(`.${allowedExtension}`),
             );
@@ -71,6 +77,9 @@ mshrinker [папка с исходными файлами] [папка для �
             return;
           } else {
             console.log(infoMessage(`Найдено файлов: ${files.length}`));
+
+            // Все файлы после фильтрации соответствуют шаблону вида
+            // "[имя файла или без него].[расширение, соответствующее allowedExtensions]"
             for (const inputFile of files) {
               console.log('\n');
               const { name, extension } = parseFileName(inputFile);
@@ -82,12 +91,13 @@ mshrinker [папка с исходными файлами] [папка для �
                 continue;
               }
 
-              const outputExtension = defineOutputExtension(
-                extension as AllowedExtensionsEnum,
-              );
+              // А теперь всегда "[имя файла].[расширение, соответствующее allowedExtensions]"
+              const inputName = name as string;
+              const inputExtension = extension as AllowedExtensionsEnum;
+              const outputExtension = defineOutputExtension(inputExtension);
               const outputFile = await defineOutputName(
                 outputFolder,
-                name as string,
+                inputName,
                 outputExtension,
               );
               const { width, height, size } = await getParameters(
@@ -110,12 +120,14 @@ mshrinker [папка с исходными файлами] [папка для �
                 );
                 await runRAMMode(
                   inputFolder,
-                  inputFile,
+                  inputName,
+                  inputExtension,
                   outputFolder,
                   outputFile,
                   size,
                   width,
                   height,
+                  thmFiles,
                 );
               } else {
                 console.log(
@@ -138,8 +150,14 @@ mshrinker [папка с исходными файлами] [папка для �
                   console.log(
                     infoMessage(`Копирую метаданные файла ${inputFile}`),
                   );
+                  const metaFile = defineMetaFile(
+                    inputFile,
+                    inputName,
+                    inputExtension,
+                    thmFiles,
+                  );
                   await copyMetadata(
-                    `${inputFolder}/${inputFile}`,
+                    `${inputFolder}/${metaFile}`,
                     `${outputFolder}/${outputFile}`,
                   )
                     .then(() =>

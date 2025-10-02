@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert';
 import { mkdir, writeFile, rm } from 'node:fs/promises';
-import { defineOutputName } from './defineOutputName';
+import defineOutputName from './defineOutputName';
 import { AllowedExtensionsEnum } from '../allowedExtensions';
 
 describe('defineOutputName', () => {
