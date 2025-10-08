@@ -11,7 +11,7 @@ const defineOutputName = async (
   try {
     const files = await readdir(outputFolder);
     for (const file of files) {
-      if (file.startsWith(nameToFind)) {
+      if (file.startsWith(nameToFind) && file.endsWith(`.${extension}`)) {
         duplicates.push(file);
       }
     }

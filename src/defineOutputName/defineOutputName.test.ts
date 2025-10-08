@@ -22,12 +22,18 @@ describe('defineOutputName', () => {
     await mkdir(dir, { recursive: true });
     await writeFile(`${dir}/file.mov`, '');
     await writeFile(`${dir}/file_1.mov`, '');
-    const result = await defineOutputName(
+    const result1 = await defineOutputName(
       dir,
       'file',
       AllowedExtensionsEnum.MOV,
     );
-    assert.strictEqual(result, 'file_2.mov');
+    assert.strictEqual(result1, 'file_2.mov');
+    const result2 = await defineOutputName(
+      dir,
+      'file',
+      AllowedExtensionsEnum.MP4,
+    );
+    assert.strictEqual(result2, 'file.mp4');
     await rm(dir, { recursive: true });
   });
 
