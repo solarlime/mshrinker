@@ -25,7 +25,7 @@ export default async function runRAMMode(
 ) {
   const inputFile = `${inputName}.${inputExtension}`;
   let diskId = null;
-  const ramDisk = outputFile;
+  const ramDisk = outputFile.replaceAll(' ', '_');
   const mountPath = `/Volumes/${ramDisk}`;
   const tempPath = join(mountPath, outputFile);
 
